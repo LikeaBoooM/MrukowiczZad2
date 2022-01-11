@@ -5,14 +5,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Reader extends Thread {
+public class Reader1 extends Thread {
     String name;
 
-    public Reader(String name) {
+    public Reader1(String name) {
         this.name = name;
     }
 
     public void run() {
+        System.out.println("Gówno");
         boolean printOnce = true;
         while (Main.writing.isLocked()) {
             if (printOnce) {
@@ -22,6 +23,7 @@ public class Reader extends Thread {
         }
         try {
             Main.reading.acquire();
+            //System.out.println("Gówno1");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -29,7 +31,6 @@ public class Reader extends Thread {
             if (Main.files[0].exists()) {
                 Main.writing.lock();
                 Main.reading.release();
-                Main.fileExist.await();
                 Main.writing.unlock();
                 Main.reading.acquire();
             }
@@ -37,14 +38,19 @@ public class Reader extends Thread {
             String fileContent = "";
             Scanner scanner = new Scanner(fileReader);
             StringBuilder sb = new StringBuilder();
-            while (scanner.hasNextLine()) {
-                sb.append(scanner.nextLine());
-                sb.append(Main.lineSep);
+            for(int i=0 ; i<30; i++){
+                while (scanner.hasNextLine()) {
+                    System.out.println("SCANN : " + scanner.nextLine());
+                    sb.append(scanner.nextLine());
+                    sb.append(Main.lineSep);
+                }
+                fileContent = sb.toString();
+                fileReader.close();
+                System.out.println("Czytelnik: "+this.name + " " + "odczytał pliku " + Main.files[0].getName()+ " " + fileContent);
+                fileContent = "";
+                Thread.sleep(1000);
             }
-            fileContent = sb.toString();
-            fileReader.close();
-            System.out.println("Czytelnik: "+this.name + " " + "odczytałz pliku nr:" + Main.files[0].getName()+ " " + fileContent);
-            } catch (InterruptedException | FileNotFoundException e) {
+        } catch (InterruptedException | FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

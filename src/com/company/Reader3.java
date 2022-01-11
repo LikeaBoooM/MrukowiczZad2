@@ -5,10 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Reader2 extends Thread {
+public class Reader3 extends Thread {
     String name;
 
-    public Reader2(String name) {
+    public Reader3(String name) {
         this.name = name;
     }
 
@@ -26,28 +26,27 @@ public class Reader2 extends Thread {
             e.printStackTrace();
         }
         try {
-            if (Main.files[2].exists()) {
+            if (Main.files[1].exists()) {
                 Main.writing.lock();
                 Main.reading.release();
                 Main.writing.unlock();
                 Main.reading.acquire();
             }
-            FileReader fileReader = new FileReader(Main.files[2]);
+            FileReader fileReader = new FileReader(Main.files[1]);
             String fileContent = "";
             Scanner scanner = new Scanner(fileReader);
             StringBuilder sb = new StringBuilder();
-            for(int i=0 ; i<50; i++){
-            while (scanner.hasNextLine()) {
-                sb.append(scanner.nextLine());
-                sb.append(Main.lineSep);
+            for(int i=0 ; i<5; i++){
+                while (scanner.hasNextLine()) {
+                    sb.append(scanner.nextLine());
+                    sb.append(Main.lineSep);
+                }
+                fileContent = sb.toString();
+                fileReader.close();
+                System.out.println("Czytelnik: "+this.name + " " + "odczytał pliku nr:" + Main.files[1].getName()+ " " + fileContent);
+                fileContent = "";
             }
-            fileContent = sb.toString();
-            fileReader.close();
-            System.out.println("Czytelnik: "+this.name + " " + "odczytał pliku nr:" + Main.files[2].getName()+ " " + fileContent);
-            fileContent = "";
-            Thread.sleep(1000);
-            }
-            } catch (InterruptedException | FileNotFoundException e) {
+        } catch (InterruptedException | FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

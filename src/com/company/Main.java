@@ -28,7 +28,11 @@ public class Main {
         }
 
         new Writer("1").start();
-        new Writer("2").start();
-        new Writer("3").start();
+        new Writer1("2").start();
+        new Writer1("3").start();
+
+        new Reader1("1").start();
+        new Reader2("2").start();
+        new Reader3("3").start();
     }
 }
