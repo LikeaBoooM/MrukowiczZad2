@@ -7,36 +7,36 @@ import java.util.Scanner;
 
 public class Reader3 extends Thread {
     String name;
+    int count = 0;
+    int maxCount = 5;
 
     public Reader3(String name) {
         this.name = name;
     }
 
     public void run() {
-        boolean printOnce = true;
-        while (Main.writing.isLocked()) {
-            if (printOnce) {
-                System.out.println("Some writer is writing, i have to wait!");
-                printOnce = false;
+        while (count<maxCount) {
+            boolean printOnce = true;
+            while (Main.writing.isLocked()) {
+                if (printOnce) {
+                    System.out.println("Some writer is writing, i have to wait!");
+                    printOnce = false;
+                }
             }
-        }
-        try {
-            Main.reading.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (Main.files[1].exists()) {
-                Main.writing.lock();
-                Main.reading.release();
-                Main.writing.unlock();
+            try {
                 Main.reading.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            FileReader fileReader = new FileReader(Main.files[1]);
-            String fileContent = "";
-            Scanner scanner = new Scanner(fileReader);
-            StringBuilder sb = new StringBuilder();
-            for(int i=0 ; i<5; i++){
+            try {
+                if (Main.files[1].exists()) {
+                    Main.writing.lock();
+//                    Main.reading.acquire();
+                }
+                FileReader fileReader = new FileReader(Main.files[1]);
+                String fileContent = "";
+                Scanner scanner = new Scanner(fileReader);
+                StringBuilder sb = new StringBuilder();
                 while (scanner.hasNextLine()) {
                     sb.append(scanner.nextLine());
                     sb.append(Main.lineSep);
@@ -45,11 +45,14 @@ public class Reader3 extends Thread {
                 fileReader.close();
                 System.out.println("Czytelnik: "+this.name + " " + "odczytał pliku nr:" + Main.files[1].getName()+ " " + fileContent);
                 fileContent = "";
+                count++;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException | FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            Main.reading.release();
+            Main.writing.unlock();
         }
     }
 }
