@@ -22,8 +22,8 @@ public class Main {
         for(int i = 0; i<4; i++){
             files[i] = new File(namesofFiles[i]);
         }
-        for (File file : files
-             ) {
+        for (File file : files) {
+            file.delete();
             file.createNewFile();
         }
 

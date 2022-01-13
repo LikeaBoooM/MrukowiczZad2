@@ -24,7 +24,7 @@ public class Writer extends Thread {
         Main.writing.lock();
         if (fileExst) {
             try {
-                FileWriter fileWriter = new FileWriter(Main.files[0]);
+                FileWriter fileWriter = new FileWriter(Main.files[0], true);
                 for (int i = 0; i < 20; i++) {
                     fileWriter.write(fileContent + Main.lineSep);
                     System.out.println("Pisarz nr: " + this.name + " pisze do pliku: " + Main.files[0].getName() + " " + Main.data);
